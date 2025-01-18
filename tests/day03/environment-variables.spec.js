@@ -1,6 +1,6 @@
 import { test } from "@playwright/test";
 
-test("@env-test Testing environment variables", async ({ page }) => {
+test("@env-test Testing environment variables @smoke", async ({ page }) => {
   console.log(process.env.PRACTICE_USERNAME);
   console.log(process.env.PRACTICE_PASSWORD);
 
