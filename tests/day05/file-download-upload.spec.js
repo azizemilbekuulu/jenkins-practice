@@ -1,0 +1,40 @@
+import { expect, test } from "@playwright/test";
+import path from "path";
+import fs from "fs";
+
+test("File downloads", async ({ page }) => {
+  let promisedDownloadEvent = page.waitForEvent("download");
+
+  await page.goto("https://practice.cydeo.com/download");
+
+  await page.click("text='Insurance.jpg'"); // triggers the download event
+
+  let download = await promisedDownloadEvent;
+
+  let donwloadPath = path.join(
+    __dirname,
+    "./downloads",
+    download.suggestedFilename()
+  );
+
+  await download.saveAs(donwloadPath);
+
+  expect(fs.existsSync(donwloadPath)).toBeTruthy();
+});
+
+test("File uploads", async ({ page }) => {
+  await page.goto("https://practice.cydeo.com/upload");
+  let pathFile = path.join(__dirname, "./uploads", "TestUpload.txt");
+
+  await page.waitForTimeout(2000);
+
+  await page.setInputFiles("//input[@id='file-upload']", pathFile);
+
+  await page.waitForTimeout(2000);
+
+  await page.click("//input[@id='file-submit']");
+
+  await page.waitForTimeout(2000);
+
+  await expect(page.getByText("File Uploaded!")).toBeVisible();
+});
